@@ -51,12 +51,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     // Close mobile sidebar on route change
     useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
 
-    // Fetch live inbox count
-    useEffect(() => {
+    const fetchInboxCount = () => {
         authedFetch('/api/tasks/stats')
             .then((r) => r.json())
             .then((d) => { if (!d.error) setInboxCount(d.inbox); })
             .catch(() => { });
+    };
+
+    // Fetch live inbox count on mount and when tasks change
+    useEffect(() => {
+        fetchInboxCount();
+        window.addEventListener('tasks:refresh', fetchInboxCount);
+        return () => window.removeEventListener('tasks:refresh', fetchInboxCount);
     }, []);
 
     const taskSubItems = [

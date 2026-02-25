@@ -32,8 +32,8 @@ export default function LandingPage() {
 
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Product</a>
-              <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Pricing</a>
-              <a href="#resources" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Resources</a>
+              <Link to="/signup" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Pricing</Link>
+              <Link to="/signup" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">Resources</Link>
             </nav>
 
             <div className="flex items-center gap-3">
@@ -57,8 +57,8 @@ export default function LandingPage() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-4">
             <a href="#features" className="block text-sm font-medium text-slate-600">Product</a>
-            <a href="#pricing" className="block text-sm font-medium text-slate-600">Pricing</a>
-            <a href="#resources" className="block text-sm font-medium text-slate-600">Resources</a>
+            <Link to="/signup" className="block text-sm font-medium text-slate-600">Pricing</Link>
+            <Link to="/signup" className="block text-sm font-medium text-slate-600">Resources</Link>
             <Link to="/login" className="block text-sm font-medium text-slate-600">Login</Link>
             <Link to="/signup" className="block text-sm font-semibold text-indigo-600">Sign Up</Link>
           </div>
@@ -198,33 +198,33 @@ export default function LandingPage() {
               <h5 className="font-bold text-slate-900 mb-4">Product</h5>
               <ul className="space-y-3">
                 <li><a href="#features" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Features</a></li>
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Integrations</a></li>
-                <li><a href="#pricing" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Pricing</a></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Integrations</Link></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Pricing</Link></li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-slate-900 mb-4">Company</h5>
               <ul className="space-y-3">
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">About Us</a></li>
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Careers</a></li>
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Contact</a></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">About Us</Link></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Careers</Link></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-slate-900 mb-4">Support</h5>
               <ul className="space-y-3">
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Terms of Service</a></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Documentation</Link></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
           <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-500">© 2024 TaskFlow Inc. All rights reserved.</p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-slate-400 hover:text-indigo-600 transition-colors">
+              <Link to="/signup" className="text-slate-400 hover:text-indigo-600 transition-colors">
                 <Shield className="size-5" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>

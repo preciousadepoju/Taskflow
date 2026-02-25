@@ -280,9 +280,9 @@ export default function SignUpPage() {
                         {/* Footer note */}
                         <p className="text-center text-xs text-slate-400 mt-6">
                             By signing up, you agree to our{' '}
-                            <a href="#" className="underline hover:text-slate-600 transition-colors">Terms of Service</a>
+                            <Link to="/" className="underline hover:text-slate-600 transition-colors">Terms of Service</Link>
                             {' '}and{' '}
-                            <a href="#" className="underline hover:text-slate-600 transition-colors">Privacy Policy</a>.
+                            <Link to="/" className="underline hover:text-slate-600 transition-colors">Privacy Policy</Link>.
                         </p>
                     </motion.div>
                 </div>

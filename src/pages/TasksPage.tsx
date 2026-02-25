@@ -134,7 +134,10 @@ export default function TasksPage() {
   const handleToggleComplete = async (task: Task, e: React.MouseEvent) => {
     e.stopPropagation();
     const res = await authedFetch(`/api/tasks/${task._id}/complete`, { method: 'PATCH' });
-    if (res.ok) fetchTasks();
+    if (res.ok) {
+      window.dispatchEvent(new Event('tasks:refresh'));
+      fetchTasks();
+    }
   };
 
   // ── Delete ────────────────────────────────────────────────────────────────
@@ -144,6 +147,7 @@ export default function TasksPage() {
     const res = await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });
     if (res.ok) {
       if (selectedTask?._id === id) setSelectedTask(null);
+      window.dispatchEvent(new Event('tasks:refresh'));
       fetchTasks();
     }
   };
@@ -152,7 +156,10 @@ export default function TasksPage() {
   const handleMarkComplete = async () => {
     if (!selectedTask) return;
     const res = await authedFetch(`/api/tasks/${selectedTask._id}/complete`, { method: 'PATCH' });
-    if (res.ok) fetchTasks();
+    if (res.ok) {
+      window.dispatchEvent(new Event('tasks:refresh'));
+      fetchTasks();
+    }
   };
 
   return (

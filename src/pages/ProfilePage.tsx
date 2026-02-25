@@ -362,93 +362,94 @@ export default function ProfilePage() {
                 </section>
 
             </div>
-            );
+        </div>
+    );
 }
 
-            // ── Sub-components ────────────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
 
-            function StatusBanner({status, message}: {status: string; message: string }) {
+function StatusBanner({ status, message }: { status: string; message: string }) {
     if (!message) return null;
-            const isSuccess = status === 'success';
-            return (
-            <div className={cn(
-                'flex items-center gap-2 p-3 rounded-xl text-sm font-medium',
-                isSuccess
-                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-                    : 'bg-red-50 border border-red-200 text-red-700'
-            )}>
-                {isSuccess ? <Check size={15} /> : <AlertCircle size={15} />}
-                {message}
-            </div>
-            );
+    const isSuccess = status === 'success';
+    return (
+        <div className={cn(
+            'flex items-center gap-2 p-3 rounded-xl text-sm font-medium',
+            isSuccess
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+                : 'bg-red-50 border border-red-200 text-red-700'
+        )}>
+            {isSuccess ? <Check size={15} /> : <AlertCircle size={15} />}
+            {message}
+        </div>
+    );
 }
 
-            function PasswordField({
-                label,
-                value,
-                onChange,
+function PasswordField({
+    label,
+    value,
+    onChange,
 }: {
-                label: string;
-            value: string;
+    label: string;
+    value: string;
     onChange: (v: string) => void;
 }) {
     const [show, setShow] = useState(false);
-            return (
-            <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">{label}</label>
-                <div className="relative">
-                    <input
-                        type={show ? 'text' : 'password'}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        required
-                        className="w-full rounded-lg border border-slate-200 px-3 py-2.5 pr-10 text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-                        placeholder="••••••••"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShow(!show)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                    >
-                        {show ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                </div>
-            </div>
-            );
-}
-
-            function PreferenceToggle({icon, title, description, defaultChecked}: {
-                icon: React.ReactNode;
-            title: string;
-            description: string;
-            defaultChecked?: boolean;
-}) {
-    const [checked, setChecked] = useState(defaultChecked ?? false);
-            return (
-            <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white">
-                <div className="flex items-center gap-4">
-                    <div className="p-2 bg-indigo-50 rounded-lg shrink-0">
-                        {icon}
-                    </div>
-                    <div>
-                        <p className="font-semibold text-slate-900 text-sm">{title}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
-                    </div>
-                </div>
+    return (
+        <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">{label}</label>
+            <div className="relative">
+                <input
+                    type={show ? 'text' : 'password'}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 pr-10 text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    placeholder="••••••••"
+                />
                 <button
-                    role="switch"
-                    aria-checked={checked}
-                    onClick={() => setChecked(!checked)}
-                    className={cn(
-                        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shrink-0',
-                        checked ? 'bg-indigo-600' : 'bg-slate-200'
-                    )}
+                    type="button"
+                    onClick={() => setShow(!show)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                    <span className={cn(
-                        'inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform',
-                        checked ? 'translate-x-6' : 'translate-x-1'
-                    )} />
+                    {show ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
             </div>
-            );
+        </div>
+    );
+}
+
+function PreferenceToggle({ icon, title, description, defaultChecked }: {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    defaultChecked?: boolean;
+}) {
+    const [checked, setChecked] = useState(defaultChecked ?? false);
+    return (
+        <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white">
+            <div className="flex items-center gap-4">
+                <div className="p-2 bg-indigo-50 rounded-lg shrink-0">
+                    {icon}
+                </div>
+                <div>
+                    <p className="font-semibold text-slate-900 text-sm">{title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+                </div>
+            </div>
+            <button
+                role="switch"
+                aria-checked={checked}
+                onClick={() => setChecked(!checked)}
+                className={cn(
+                    'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shrink-0',
+                    checked ? 'bg-indigo-600' : 'bg-slate-200'
+                )}
+            >
+                <span className={cn(
+                    'inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform',
+                    checked ? 'translate-x-6' : 'translate-x-1'
+                )} />
+            </button>
+        </div>
+    );
 }

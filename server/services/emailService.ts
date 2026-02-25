@@ -153,3 +153,79 @@ export async function sendReminderEmail(payload: ReminderEmailPayload): Promise<
 
   console.log(`[emailService] Reminder sent → ${payload.toEmail} | messageId: ${info.messageId}`);
 }
+
+export interface PasswordResetPayload {
+  toEmail: string;
+  toName: string;
+  resetLink: string;
+}
+
+export async function sendPasswordResetEmail(payload: PasswordResetPayload): Promise<void> {
+  const transporter = createTransport();
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Reset Password – TaskFlow</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f6f8;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f6f6f8;padding:40px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0"
+        style="background:#ffffff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.07);overflow:hidden;max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#4f46e5;padding:28px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td><span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">⚡ TaskFlow</span></td>
+              <td align="right">
+                <span style="background:rgba(255,255,255,0.18);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">
+                  Password Reset
+                </span>
+              </td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr><td style="padding:32px;">
+          <p style="margin:0 0 8px;color:#64748b;font-size:14px;">Hi ${payload.toName},</p>
+          <p style="margin:0 0 24px;color:#0f172a;font-size:18px;font-weight:700;line-height:1.4;">
+            Forgot your password?
+          </p>
+          <p style="margin:0 0 24px;color:#475569;font-size:14px;line-height:1.6;">
+            We received a request to reset your password. Click the button below to choose a new one. This link expires in 1 hour.
+          </p>
+          <table width="100%" cellpadding="0" cellspacing="0"><tr>
+            <td align="center">
+              <a href="${payload.resetLink}"
+                style="display:inline-block;background:#4f46e5;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;">
+                Reset Password →
+              </a>
+            </td>
+          </tr></table>
+          <p style="margin:24px 0 0;color:#94a3b8;font-size:12px;">
+            If you didn't request a password reset, you can safely ignore this email.
+          </p>
+        </td></tr>
+        <tr>
+          <td style="padding:20px 32px;border-top:1px solid #e2e8f0;background:#f8fafc;">
+            <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center;">
+              © ${new Date().getFullYear()} TaskFlow · Manage your tasks better.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  const info = await transporter.sendMail({
+    from: `"TaskFlow" <${process.env.GMAIL_USER}>`,
+    to: payload.toEmail,
+    subject: `🔒 Reset your TaskFlow password`,
+    html,
+  });
+
+  console.log(`[emailService] Password reset sent → ${payload.toEmail} | messageId: ${info.messageId}`);
+}

@@ -118,9 +118,9 @@ export default function LoginPage() {
                                     <label htmlFor="login-password" className="block text-sm font-semibold text-slate-700">
                                         Password
                                     </label>
-                                    <a href="#" className="text-xs text-indigo-600 font-medium hover:text-indigo-700 transition-colors">
+                                    <Link to="/forgot-password" className="text-xs text-indigo-600 font-medium hover:text-indigo-700 transition-colors">
                                         Forgot password?
-                                    </a>
+                                    </Link>
                                 </div>
                                 <div className="relative">
                                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
@@ -179,9 +179,9 @@ export default function LoginPage() {
                     {/* Footer note */}
                     <p className="text-center text-xs text-slate-400 mt-6">
                         By signing in, you agree to our{' '}
-                        <a href="#" className="underline hover:text-slate-600 transition-colors">Terms of Service</a>
+                        <Link to="/" className="underline hover:text-slate-600 transition-colors">Terms of Service</Link>
                         {' '}and{' '}
-                        <a href="#" className="underline hover:text-slate-600 transition-colors">Privacy Policy</a>.
+                        <Link to="/" className="underline hover:text-slate-600 transition-colors">Privacy Policy</Link>.
                     </p>
                 </motion.div>
             </main>
