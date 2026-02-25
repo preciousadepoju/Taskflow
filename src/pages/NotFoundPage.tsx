@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Zap, ArrowLeft } from 'lucide-react';
+import { Layers, ArrowLeft } from 'lucide-react';
 
 export default function NotFoundPage() {
     return (
@@ -8,7 +8,7 @@ export default function NotFoundPage() {
                 {/* Logo */}
                 <div className="flex items-center justify-center gap-3 mb-10">
                     <div className="bg-indigo-600 rounded-xl p-2 text-white">
-                        <Zap size={24} />
+                        <Layers size={24} />
                     </div>
                     <span className="text-2xl font-bold tracking-tight text-slate-900">TaskFlow</span>
                 </div>

@@ -3,12 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   Plus,
-  MoreHorizontal,
   Edit,
   Trash2,
   CheckCircle2,
   Calendar,
-  Share2,
   X,
   ChevronRight,
   Loader2,
@@ -421,8 +419,6 @@ export default function TasksPage() {
                 >
                   <Edit size={18} />
                 </button>
-                <Share2 className="text-slate-400 cursor-pointer hover:text-slate-600 size-[18px]" />
-                <MoreHorizontal className="text-slate-400 cursor-pointer hover:text-slate-600 size-[18px]" />
                 <button onClick={() => setSelectedTask(null)}>
                   <X className="text-slate-400 hover:text-slate-600 size-[18px]" />
                 </button>

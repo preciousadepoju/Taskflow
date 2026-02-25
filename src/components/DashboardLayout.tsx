@@ -9,7 +9,7 @@ import {
     Search,
     Plus,
     ChevronDown,
-    Zap,
+    Layers,
     Inbox,
     Sun,
     CalendarClock,
@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex items-center justify-between px-4 py-5 border-b border-slate-200">
                 <div className="flex items-center gap-2.5">
                     <div className="bg-indigo-600 rounded-xl p-1.5 text-white">
-                        <Zap size={20} />
+                        <Layers size={20} />
                     </div>
                     <span className="text-xl font-black tracking-tight text-slate-900">TaskFlow</span>
                 </div>
@@ -287,7 +287,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                     </span>
                                 )}
                             </div>
-                            <ChevronDown size={16} className="hidden sm:block text-slate-400 group-hover:text-slate-600 transition-colors" />
                         </Link>
                     </div>
                 </header>

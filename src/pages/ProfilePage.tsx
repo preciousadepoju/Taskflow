@@ -183,13 +183,6 @@ export default function ProfilePage() {
                                         </div>
                                     )}
                                 </div>
-                                <button
-                                    type="button"
-                                    title="Avatar is auto-generated from your name"
-                                    className="absolute bottom-0 right-0 w-7 h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition-colors"
-                                >
-                                    <Camera size={13} />
-                                </button>
                             </div>
 
                             {/* Form fields */}

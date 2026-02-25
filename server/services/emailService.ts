@@ -63,7 +63,7 @@ function buildReminderHtml(p: ReminderEmailPayload): string {
         <tr>
           <td style="background:#4f46e5;padding:28px 32px;">
             <table width="100%" cellpadding="0" cellspacing="0"><tr>
-              <td><span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">⚡ TaskFlow</span></td>
+              <td><span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">📋 TaskFlow</span></td>
               <td align="right">
                 <span style="background:rgba(255,255,255,0.18);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">
                   Task Reminder
@@ -115,9 +115,9 @@ function buildReminderHtml(p: ReminderEmailPayload): string {
           <!-- CTA -->
           <table width="100%" cellpadding="0" cellspacing="0"><tr>
             <td align="center">
-              <a href="${appUrl}/tasks"
+              <a href="${appUrl}/login"
                 style="display:inline-block;background:#4f46e5;color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;">
-                View Task →
+                Login to View Task →
               </a>
             </td>
           </tr></table>
@@ -178,7 +178,7 @@ export async function sendPasswordResetEmail(payload: PasswordResetPayload): Pro
         <tr>
           <td style="background:#4f46e5;padding:28px 32px;">
             <table width="100%" cellpadding="0" cellspacing="0"><tr>
-              <td><span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">⚡ TaskFlow</span></td>
+              <td><span style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">📋 TaskFlow</span></td>
               <td align="right">
                 <span style="background:rgba(255,255,255,0.18);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">
                   Password Reset

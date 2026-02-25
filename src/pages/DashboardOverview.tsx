@@ -3,7 +3,6 @@ import {
   ClipboardList,
   CheckCircle2,
   Clock,
-  MoreHorizontal,
   ChevronRight,
   Loader2,
   AlertCircle,
@@ -195,8 +194,8 @@ export default function DashboardOverview() {
                         {formatDueShort(task.dueDate)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-slate-400 hover:text-slate-600 transition-colors opacity-0 group-hover:opacity-100">
-                          <MoreHorizontal size={18} />
+                        <button className="text-slate-400 hover:text-indigo-600 transition-colors opacity-0 group-hover:opacity-100">
+                          <ChevronRight size={18} />
                         </button>
                       </td>
                     </tr>

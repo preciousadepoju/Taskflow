@@ -3,7 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   LayoutDashboard,
-  Zap,
+  Layers,
   Users,
   Shield,
   ChevronRight,
@@ -25,7 +25,7 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="bg-indigo-600 p-1.5 rounded-lg flex items-center justify-center">
-                <Zap className="text-white size-5" />
+                <Layers className="text-white size-5" />
               </div>
               <span className="text-xl font-bold tracking-tight text-slate-900">TaskFlow</span>
             </div>
@@ -140,7 +140,7 @@ export default function LandingPage() {
                 description="Get a bird's-eye view of all your projects with our clean and customizable interface. Tailor your workspace to your team's specific needs."
               />
               <FeatureCard
-                icon={<Zap className="text-indigo-600" />}
+                icon={<Layers className="text-indigo-600" />}
                 title="Smart Scheduling"
                 description="Let our AI-driven engine prioritize your tasks and optimize your daily calendar automatically based on deadlines and team bandwidth."
               />
@@ -186,7 +186,7 @@ export default function LandingPage() {
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
                 <div className="bg-indigo-600 p-1.5 rounded-lg flex items-center justify-center">
-                  <Zap className="text-white size-5" />
+                  <Layers className="text-white size-5" />
                 </div>
                 <span className="text-lg font-bold text-slate-900">TaskFlow</span>
               </div>
@@ -198,33 +198,34 @@ export default function LandingPage() {
               <h5 className="font-bold text-slate-900 mb-4">Product</h5>
               <ul className="space-y-3">
                 <li><a href="#features" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Features</a></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Integrations</Link></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Pricing</Link></li>
+                <li><a href="#features" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Integrations</a></li>
+                <li><a href="#features" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Pricing</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-slate-900 mb-4">Company</h5>
               <ul className="space-y-3">
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">About Us</Link></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Careers</Link></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Contact</Link></li>
+                <li><span className="text-sm text-slate-500">123 Task Lane, Suite 100</span></li>
+                <li><span className="text-sm text-slate-500">San Francisco, CA 94107</span></li>
+                <li><a href="mailto:contact@taskflow.dev" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">contact@taskflow.dev</a></li>
+                <li><a href="tel:+15551234567" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">+1 (555) 123-4567</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-bold text-slate-900 mb-4">Support</h5>
               <ul className="space-y-3">
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Documentation</Link></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/signup" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Terms of Service</Link></li>
+                <li><a href="mailto:support@taskflow.dev" className="text-sm text-slate-500 hover:text-indigo-600 transition-colors">Help Center</a></li>
+                <li><span className="text-sm text-slate-500">Privacy Policy (Terms apply)</span></li>
+                <li><span className="text-sm text-slate-500">Terms of Service</span></li>
               </ul>
             </div>
           </div>
           <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-500">© 2024 TaskFlow Inc. All rights reserved.</p>
+            <p className="text-sm text-slate-500">© {new Date().getFullYear()} TaskFlow Inc. All rights reserved.</p>
             <div className="flex items-center gap-6">
-              <Link to="/signup" className="text-slate-400 hover:text-indigo-600 transition-colors">
+              <span className="text-slate-400">
                 <Shield className="size-5" />
-              </Link>
+              </span>
             </div>
           </div>
         </div>
