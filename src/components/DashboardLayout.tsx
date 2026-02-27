@@ -12,6 +12,7 @@ import {
     Layers,
     Inbox,
     Sun,
+    Moon,
     CalendarClock,
     CheckSquare2,
     Menu,
@@ -34,9 +35,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [activeTask, setActiveTask] = useState('Inbox');
     const [inboxCount, setInboxCount] = useState<number | null>(null);
     const [headerSearch, setHeaderSearch] = useState('');
+    const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem('theme') === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    });
+
     const user = useUser();
     const avatarUrl = user ? getAvatarUrl(user) : null;
     const displayName = user?.name ?? 'Account';
+
+    // Handle Dark Mode toggle
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [darkMode]);
 
     // Set page title per route
     useEffect(() => {
@@ -202,10 +219,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[#f6f6f8] text-slate-900 font-sans">
+        <div className="flex h-screen overflow-hidden bg-[#f6f6f8] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
 
             {/* ── Desktop Sidebar (lg+) ─────────────────────────────────── */}
-            <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-white border-r border-slate-200 h-screen">
+            <aside className="hidden lg:flex flex-col w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen transition-colors duration-300">
                 <SidebarContent />
             </aside>
 
@@ -231,7 +248,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
                 {/* Header */}
-                <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center gap-3 shrink-0">
+                <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 flex items-center gap-3 shrink-0 transition-colors duration-300">
 
                     {/* Hamburger — mobile only */}
                     <button
@@ -270,15 +287,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             <span className="hidden sm:inline">Add Task</span>
                         </button>
 
-                        <div className="hidden sm:block h-8 w-px bg-slate-200" />
+                        <div className="hidden sm:block h-8 w-px bg-slate-200 dark:bg-slate-800" />
+
+                        {/* Dark Mode Toggle */}
+                        <button
+                            onClick={() => setDarkMode(!darkMode)}
+                            className="p-2 sm:p-2.5 rounded-full text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-amber-400 bg-slate-100/50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition-all focus:outline-none"
+                            aria-label="Toggle Dark Mode"
+                        >
+                            {darkMode ? <Sun size={18} className="animate-in fade-in zoom-in spin-in-12 duration-300" /> : <Moon size={18} className="animate-in fade-in zoom-in -spin-in-12 duration-300" />}
+                        </button>
+
+                        <div className="hidden sm:block h-8 w-px bg-slate-200 dark:bg-slate-800" />
 
                         {/* User avatar / name */}
                         <Link to="/profile" className="flex items-center gap-2 sm:gap-3 cursor-pointer group">
                             <div className="text-right hidden md:block">
-                                <p className="text-sm font-semibold leading-none">{displayName}</p>
-                                <p className="text-xs text-slate-500 mt-1 truncate max-w-[120px]">{user?.email ?? ''}</p>
+                                <p className="text-sm font-semibold leading-none text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{displayName}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate max-w-[120px]">{user?.email ?? ''}</p>
                             </div>
-                            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden flex items-center justify-center shrink-0">
                                 {avatarUrl ? (
                                     <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover rounded-full" />
                                 ) : (

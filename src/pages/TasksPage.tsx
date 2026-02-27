@@ -13,6 +13,7 @@ import {
   Loader2,
   RotateCcw,
   AlertCircle,
+  Tag,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import CreateTaskModal from '../components/CreateTaskModal';
@@ -20,6 +21,21 @@ import ConfirmModal from '../components/ConfirmModal';
 import { authedFetch, Task, TabId } from '@/src/lib/api';
 import { useUser } from '@/src/hooks/useUser';
 import confetti from 'canvas-confetti';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // ── Priority colours ──────────────────────────────────────────────────────────
 const PRIORITY_COLOURS: Record<string, string> = {
@@ -181,6 +197,40 @@ export default function TasksPage() {
     setTaskToDelete(null);
   };
 
+  // ── Drag & Drop ───────────────────────────────────────────────────────────
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before dragging starts (allows clicks on buttons to work)
+      },
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setTasks((items) => {
+      const oldIndex = items.findIndex((i: Task) => i._id === active.id);
+      const newIndex = items.findIndex((i: Task) => i._id === over.id);
+
+      const newTasks = arrayMove(items, oldIndex, newIndex);
+
+      // Calculate new orders (simplified: just map index to order for all tasks on tab)
+      // For a robust system, we would calculate relative order values.
+      // Here we just reassign order based on current list state.
+      const updates = newTasks.map((t: Task, idx: number) => ({ id: t._id, order: idx }));
+
+      // Fire-and-forget sync to backend
+      authedFetch('/api/tasks/reorder', {
+        method: 'PATCH',
+        body: JSON.stringify({ tasks: updates })
+      }).catch(console.error);
+
+      return newTasks;
+    });
+  };
+
   // ── Mark complete from detail panel ──────────────────────────────────────
   const handleMarkComplete = async () => {
     if (!selectedTask) return;
@@ -217,22 +267,22 @@ export default function TasksPage() {
 
       {/* ── Task List ─────────────────────────────────────────────── */}
       <div className={cn(
-        'flex-1 flex flex-col min-w-0 bg-white',
+        'flex-1 flex flex-col min-w-0 bg-white dark:bg-slate-900 transition-colors duration-300',
         selectedTask && 'hidden md:flex'
       )}>
         {/* Header */}
-        <header className="border-b border-slate-200 p-4 sm:p-6">
+        <header className="border-b border-slate-200 dark:border-slate-800 p-4 sm:p-6 transition-colors duration-300">
           <div className="flex items-center justify-between mb-4 sm:mb-5 gap-3">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <h2 className="text-xl sm:text-2xl font-bold shrink-0">Task List</h2>
-              <div className="relative flex items-center bg-slate-100 rounded-lg px-3 py-1.5 gap-2 border border-slate-200 flex-1 min-w-0 max-w-xs">
-                <Search className="text-slate-500 size-4 shrink-0" />
+              <h2 className="text-xl sm:text-2xl font-bold shrink-0 text-slate-900 dark:text-white transition-colors">Task List</h2>
+              <div className="relative flex items-center bg-slate-100 dark:bg-slate-800/50 rounded-lg px-3 py-1.5 gap-2 border border-slate-200 dark:border-slate-700/50 flex-1 min-w-0 max-w-xs transition-colors duration-300">
+                <Search className="text-slate-500 dark:text-slate-400 size-4 shrink-0 transition-colors" />
                 <input
                   type="text"
                   placeholder="Search…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="bg-transparent border-none focus:ring-0 text-sm w-full p-0 placeholder:text-slate-500 outline-none"
+                  className="bg-transparent border-none focus:ring-0 text-sm w-full p-0 placeholder:text-slate-500 dark:text-slate-200 dark:placeholder:text-slate-500 outline-none transition-colors"
                 />
                 {search && (
                   <button onClick={() => setSearch('')} className="text-slate-400 hover:text-slate-600">
@@ -298,132 +348,63 @@ export default function TasksPage() {
             <>
               {/* ── Desktop table (md+) ── */}
               <table className="hidden md:table w-full border-collapse">
-                <thead className="sticky top-0 bg-white z-10 border-b border-slate-100">
+                <thead className="sticky top-0 bg-white dark:bg-slate-900 z-10 border-b border-slate-100 dark:border-slate-800 transition-colors duration-300">
                   <tr>
                     <th className="w-14 px-6 py-3 text-left" />
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Task Title</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Priority</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Due Date</th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider pr-6">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Task Title</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Category</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Priority</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Due Date</th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider pr-6 transition-colors">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {tasks.map((task) => {
-                    const due = formatDue(task.dueDate);
-                    const done = task.status === 'completed';
-                    const isSelected = selectedTask?._id === task._id;
-                    return (
-                      <tr
-                        key={task._id}
-                        onClick={() => setSelectedTask(task)}
-                        className={cn(
-                          'group hover:bg-slate-50 cursor-pointer transition-colors',
-                          done && 'opacity-50',
-                          isSelected && 'bg-indigo-50/40'
-                        )}
-                      >
-                        <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            onClick={(e) => handleToggleComplete(task, e)}
-                            className={cn("transition-colors", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
-                            title={done ? 'Mark todo' : 'Mark complete'}
-                          >
-                            {done ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                          </button>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className={cn('h-2 w-2 rounded-full shrink-0', PRIORITY_DOT[task.priority])} />
-                            <p className={cn('text-sm font-medium text-slate-900', done && 'line-through')}>{task.title}</p>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', PRIORITY_COLOURS[task.priority])}>
-                            {task.priority}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <p className={cn('text-xs font-medium', due.color)}>{due.label}</p>
-                        </td>
-                        <td className="px-4 py-4 text-right pr-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            className="text-slate-400 hover:text-indigo-600 transition-colors"
-                            title="Edit"
-                            onClick={(e) => { e.stopPropagation(); setEditTask(task); setIsModalOpen(true); }}
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button
-                            className="text-slate-400 hover:text-red-500 transition-colors ml-2"
-                            title="Delete"
-                            onClick={(e) => handleDelete(task._id, e)}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 transition-colors duration-300">
+                      {tasks.map((task) => (
+                        <SortableTableRow
+                          key={task._id}
+                          task={task}
+                          selectedTask={selectedTask}
+                          setSelectedTask={setSelectedTask}
+                          handleToggleComplete={handleToggleComplete}
+                          setEditTask={setEditTask}
+                          setIsModalOpen={setIsModalOpen}
+                          handleDelete={handleDelete}
+                        />
+                      ))}
+                    </tbody>
+                  </SortableContext>
+                </DndContext>
               </table>
 
               {/* ── Mobile card list ── */}
-              <div className="md:hidden divide-y divide-slate-100">
-                {tasks.map((task) => {
-                  const due = formatDue(task.dueDate);
-                  const done = task.status === 'completed';
-                  return (
-                    <div
-                      key={task._id}
-                      onClick={() => setSelectedTask(task)}
-                      className={cn(
-                        'flex items-start gap-3 px-4 py-4 cursor-pointer active:bg-slate-50',
-                        done && 'opacity-50'
-                      )}
-                    >
-                      <button
-                        onClick={(e) => handleToggleComplete(task, e)}
-                        className={cn("mt-0.5 transition-colors shrink-0", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
-                      >
-                        {done ? <CheckCircle2 size={20} /> : <Circle size={20} />}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className={cn('text-sm font-medium text-slate-900 truncate', done && 'line-through')}>
-                          {task.title}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                          <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', PRIORITY_COLOURS[task.priority])}>
-                            {task.priority}
-                          </span>
-                          <span className={cn('text-xs font-medium', due.color)}>{due.label}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors"
-                          onClick={(e) => { e.stopPropagation(); setEditTask(task); setIsModalOpen(true); }}
-                        >
-                          <Edit size={15} />
-                        </button>
-                        <button
-                          className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
-                          onClick={(e) => handleDelete(task._id, e)}
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800 transition-colors duration-300">
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={tasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
+                    {tasks.map((task) => (
+                      <SortableCard
+                        key={task._id}
+                        task={task}
+                        selectedTask={selectedTask}
+                        setSelectedTask={setSelectedTask}
+                        handleToggleComplete={handleToggleComplete}
+                        setEditTask={setEditTask}
+                        setIsModalOpen={setIsModalOpen}
+                        handleDelete={handleDelete}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
               </div>
             </>
           )}
         </div>
 
         {/* Footer */}
-        <footer className="border-t border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between shrink-0">
-          <p className="text-xs text-slate-500">
-            Showing <span className="font-bold">{tasks.length}</span> task{tasks.length !== 1 ? 's' : ''}
+        <footer className="border-t border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between shrink-0 transition-colors duration-300">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Showing <span className="font-bold text-slate-900 dark:text-slate-200">{tasks.length}</span> task{tasks.length !== 1 ? 's' : ''}
           </p>
           <button
             onClick={fetchTasks}
@@ -443,14 +424,14 @@ export default function TasksPage() {
             onClick={() => setSelectedTask(null)}
           />
           <aside className={cn(
-            'bg-white border-slate-200 flex flex-col overflow-y-auto',
+            'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 flex flex-col overflow-y-auto transition-colors duration-300',
             // Mobile: fixed bottom sheet
             'fixed bottom-0 left-0 right-0 z-40 rounded-t-2xl border-t max-h-[85vh]',
             // Desktop: right panel
             'md:static md:w-[380px] lg:w-[400px] md:border-l md:border-t-0 md:rounded-none md:z-auto md:max-h-none md:h-full md:shrink-0'
           )}>
             {/* Panel header */}
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 transition-colors duration-300">
               <button
                 onClick={handleMarkComplete}
                 className={cn(
@@ -480,13 +461,13 @@ export default function TasksPage() {
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Title + meta */}
               <section>
-                <h3 className={cn('text-xl font-bold mb-4', selectedTask.status === 'completed' && 'line-through text-slate-400')}>
+                <h3 className={cn('text-xl font-bold mb-4 text-slate-900 dark:text-white transition-colors', selectedTask.status === 'completed' && 'line-through text-slate-400 dark:text-slate-500')}>
                   {selectedTask.title}
                 </h3>
                 <div className="space-y-3">
                   <DetailRow label="Assignee">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-600">
+                    <div className="flex items-center gap-2 text-slate-900 dark:text-slate-200">
+                      <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400 transition-colors">
                         {user?.name?.charAt(0).toUpperCase() ?? 'ME'}
                       </div>
                       <span className="text-sm font-medium">{user?.name ?? 'Me'}</span>
@@ -502,6 +483,13 @@ export default function TasksPage() {
                       </span>
                     </div>
                   </DetailRow>
+                  {selectedTask.category !== 'None' && (
+                    <DetailRow label="Category">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
+                        <Tag size={14} /> {selectedTask.category}
+                      </span>
+                    </DetailRow>
+                  )}
                   <DetailRow label="Priority">
                     <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', PRIORITY_COLOURS[selectedTask.priority])}>
                       {selectedTask.priority}
@@ -542,12 +530,12 @@ export default function TasksPage() {
               )}
             </div>
 
-            <div className="p-5 border-t border-slate-100">
+            <div className="p-5 border-t border-slate-100 dark:border-slate-800 transition-colors duration-300">
               <div className={cn(
-                'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium',
+                'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-300',
                 selectedTask.reminders
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'bg-slate-100 text-slate-500'
+                  ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
               )}>
                 <span className={cn('h-2 w-2 rounded-full', selectedTask.reminders ? 'bg-indigo-500' : 'bg-slate-400')} />
                 {selectedTask.reminders ? 'Email reminder enabled — 24h before due' : 'No reminder set'}
@@ -583,6 +571,156 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
     <div className="flex items-center gap-6">
       <span className="w-20 text-sm text-slate-500 shrink-0">{label}</span>
       {children}
+    </div>
+  );
+}
+
+// ── Drag & Drop Components ──────────────────────────────────────────────────
+function SortableTableRow({ task, selectedTask, setSelectedTask, handleToggleComplete, setEditTask, setIsModalOpen, handleDelete }: any) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative' as any,
+    zIndex: isDragging ? 50 : 'auto',
+  };
+
+  const due = formatDue(task.dueDate);
+  const done = task.status === 'completed';
+  const isSelected = selectedTask?._id === task._id;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => setSelectedTask(task)}
+      className={cn(
+        'group hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors',
+        done && 'opacity-50',
+        isSelected && 'bg-indigo-50/40 dark:bg-indigo-900/20',
+        isDragging && 'bg-slate-50 dark:bg-slate-800 shadow-lg ring-1 ring-slate-200 dark:ring-slate-700'
+      )}
+    >
+      <td className="px-6 py-4" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={(e) => handleToggleComplete(task, e)}
+          className={cn("transition-colors", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
+          title={done ? 'Mark todo' : 'Mark complete'}
+        >
+          {done ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+        </button>
+      </td>
+      <td className="px-4 py-4 text-slate-900 dark:text-slate-200">
+        <div className="flex items-center gap-2">
+          <div className={cn('h-2 w-2 rounded-full shrink-0', PRIORITY_DOT[task.priority])} />
+          <p className={cn('text-sm font-medium', done && 'line-through')}>{task.title}</p>
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        {task.category !== 'None' ? (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <Tag size={12} /> {task.category}
+          </span>
+        ) : (
+          <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
+        )}
+      </td>
+      <td className="px-4 py-4">
+        <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', PRIORITY_COLOURS[task.priority])}>
+          {task.priority}
+        </span>
+      </td>
+      <td className="px-4 py-4">
+        <p className={cn('text-xs font-medium', due.color)}>{due.label}</p>
+      </td>
+      <td className="px-4 py-4 text-right pr-6 opacity-0 group-hover:opacity-100 transition-opacity" onPointerDown={(e) => e.stopPropagation()}>
+        <button
+          className="text-slate-400 hover:text-indigo-600 transition-colors"
+          title="Edit"
+          onClick={(e) => { e.stopPropagation(); setEditTask(task); setIsModalOpen(true); }}
+        >
+          <Edit size={16} />
+        </button>
+        <button
+          className="text-slate-400 hover:text-red-500 transition-colors ml-2"
+          title="Delete"
+          onClick={(e) => handleDelete(task._id, e)}
+        >
+          <Trash2 size={16} />
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+function SortableCard({ task, selectedTask, setSelectedTask, handleToggleComplete, setEditTask, setIsModalOpen, handleDelete }: any) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+    position: 'relative' as any,
+    zIndex: isDragging ? 50 : 'auto',
+  };
+
+  const due = formatDue(task.dueDate);
+  const done = task.status === 'completed';
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => setSelectedTask(task)}
+      className={cn(
+        'flex items-start gap-3 px-4 py-4 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800/50 transition-colors duration-300',
+        done && 'opacity-50',
+        isDragging && 'bg-slate-50 dark:bg-slate-800 shadow-md ring-1 ring-slate-200 dark:ring-slate-700'
+      )}
+    >
+      <button
+        onClick={(e) => handleToggleComplete(task, e)}
+        onPointerDown={(e) => e.stopPropagation()}
+        className={cn("mt-0.5 transition-colors shrink-0", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
+      >
+        {done ? <CheckCircle2 size={20} /> : <Circle size={20} />}
+      </button>
+      <div className="flex-1 min-w-0">
+        <p className={cn('text-sm font-medium text-slate-900 dark:text-slate-200 truncate', done && 'line-through')}>
+          {task.title}
+        </p>
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+          <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium', PRIORITY_COLOURS[task.priority])}>
+            {task.priority}
+          </span>
+          {task.category !== 'None' && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              <Tag size={10} /> {task.category}
+            </span>
+          )}
+          <span className={cn('text-xs font-medium', due.color)}>{due.label}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0" onPointerDown={(e) => e.stopPropagation()}>
+        <button
+          className="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors"
+          onClick={(e) => { e.stopPropagation(); setEditTask(task); setIsModalOpen(true); }}
+        >
+          <Edit size={15} />
+        </button>
+        <button
+          className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+          onClick={(e) => handleDelete(task._id, e)}
+        >
+          <Trash2 size={15} />
+        </button>
+      </div>
     </div>
   );
 }

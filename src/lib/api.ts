@@ -33,6 +33,8 @@ export interface Task {
     priority: 'Low' | 'Medium' | 'High';
     status: 'todo' | 'in_progress' | 'completed';
     dueDate: string | null;
+    category: string;
+    order: number;
     reminders: boolean;
     createdAt: string;
     completedAt: string | null;

@@ -19,6 +19,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState('Medium');
     const [status, setStatus] = useState('todo');
+    const [category, setCategory] = useState('None');
     const [dueDate, setDueDate] = useState('');
     const [reminders, setReminders] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +32,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
             setDescription(editTask.description ?? '');
             setPriority(editTask.priority);
             setStatus(editTask.status === 'completed' ? 'todo' : editTask.status);
+            setCategory(editTask.category ?? 'None');
             setDueDate(editTask.dueDate ? editTask.dueDate.slice(0, 10) : '');
             setReminders(editTask.reminders);
         } else {
@@ -51,6 +53,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
         setDescription(EMPTY_FORM.description);
         setPriority(EMPTY_FORM.priority);
         setStatus(EMPTY_FORM.status);
+        setCategory('None');
         setDueDate(EMPTY_FORM.dueDate);
         setReminders(EMPTY_FORM.reminders);
         setError('');
@@ -71,6 +74,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
             description: description.trim(),
             priority,
             status,
+            category,
             dueDate: dueDate || null,
             reminders,
         };
@@ -122,17 +126,17 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
                     >
                         <div
-                            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg pointer-events-auto"
+                            className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg pointer-events-auto transition-colors duration-300"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Header */}
                             <div className="flex items-center justify-between px-6 pt-6 pb-5">
-                                <h2 className="text-lg font-bold text-slate-900">
+                                <h2 className="text-lg font-bold text-slate-900 dark:text-white transition-colors">
                                     {isEdit ? 'Edit Task' : 'Create New Task'}
                                 </h2>
                                 <button
                                     onClick={handleCancel}
-                                    className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100"
+                                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                                     aria-label="Close modal"
                                 >
                                     <X size={20} />
@@ -142,7 +146,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                             <div className="px-6 pb-6 space-y-5">
                                 {/* Task Title */}
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 transition-colors">
                                         Task Title <span className="text-red-500">*</span>
                                     </label>
                                     <input
@@ -152,31 +156,31 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                         placeholder="e.g., Design new landing page"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full border-0 border-b-2 border-slate-200 focus:border-indigo-500 bg-transparent text-slate-900 text-base placeholder:text-slate-400 focus:ring-0 pb-2 transition-colors outline-none"
+                                        className="w-full border-0 border-b-2 border-slate-200 dark:border-slate-700 focus:border-indigo-500 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0 pb-2 transition-colors outline-none"
                                     />
                                 </div>
 
                                 {/* Description */}
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 transition-colors">Description</label>
                                     <textarea
                                         placeholder="Add more details here..."
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         rows={3}
-                                        className="w-full rounded-xl border border-slate-200 bg-indigo-50/40 text-slate-900 text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent p-3 resize-none transition-all outline-none"
+                                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-indigo-50/40 dark:bg-slate-800/50 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent p-3 resize-none transition-all outline-none"
                                     />
                                 </div>
 
-                                {/* Priority + Status + Due Date */}
-                                <div className="grid grid-cols-3 gap-3">
+                                {/* Priority + Status + Due Date + Category */}
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Priority</label>
+                                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Priority</label>
                                         <div className="relative">
                                             <select
                                                 value={priority}
                                                 onChange={(e) => setPriority(e.target.value)}
-                                                className="w-full appearance-none rounded-xl border border-slate-200 bg-white text-slate-900 text-sm px-3 py-2.5 pr-8 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
+                                                className="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm px-3 py-2.5 pr-8 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
                                             >
                                                 <option value="Low">Low</option>
                                                 <option value="Medium">Medium</option>
@@ -186,12 +190,12 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Status</label>
                                         <div className="relative">
                                             <select
                                                 value={status}
                                                 onChange={(e) => setStatus(e.target.value)}
-                                                className="w-full appearance-none rounded-xl border border-slate-200 bg-white text-slate-900 text-sm px-3 py-2.5 pr-8 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
+                                                className="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm px-3 py-2.5 pr-8 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
                                             >
                                                 <option value="todo">To Do</option>
                                                 <option value="in_progress">In Progress</option>
@@ -200,25 +204,43 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-700 mb-2">Due Date</label>
+                                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                                        <div className="relative">
+                                            <select
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                className="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm px-3 py-2.5 pr-8 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
+                                            >
+                                                <option value="None">None</option>
+                                                <option value="Work">Work</option>
+                                                <option value="Home">Home</option>
+                                                <option value="Shopping">Shopping</option>
+                                                <option value="Personal">Personal</option>
+                                                <option value="Study">Study</option>
+                                            </select>
+                                            <ChevronDown size={16} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Due Date</label>
                                         <input
                                             type="date"
                                             value={dueDate}
                                             onChange={(e) => setDueDate(e.target.value)}
-                                            className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 text-sm px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-[border,box-shadow,background-color] dark:color-scheme-dark"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Send Reminders Toggle */}
-                                <div className="flex items-center justify-between bg-indigo-50/60 border border-indigo-100 rounded-xl px-4 py-3">
+                                <div className="flex items-center justify-between bg-indigo-50/60 dark:bg-slate-800/50 border border-indigo-100 dark:border-slate-700 rounded-xl px-4 py-3 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-                                            <Bell size={18} className="text-indigo-600" />
+                                        <div className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0 transition-colors">
+                                            <Bell size={18} className="text-indigo-600 dark:text-indigo-400" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-semibold text-slate-800">Send Reminders</p>
-                                            <p className="text-xs text-slate-500">Enable mobile and email reminders.</p>
+                                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 transition-colors">Send Reminders</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">Enable mobile and email reminders.</p>
                                         </div>
                                     </div>
                                     <button
@@ -226,7 +248,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                         role="switch"
                                         aria-checked={reminders}
                                         onClick={() => setReminders(!reminders)}
-                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${reminders ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${reminders ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-700'}`}
                                     >
                                         <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${reminders ? 'translate-x-6' : 'translate-x-1'}`} />
                                     </button>
@@ -244,7 +266,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                     <button
                                         type="button"
                                         onClick={handleCancel}
-                                        className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
+                                        className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
                                     >
                                         Cancel
                                     </button>
@@ -253,7 +275,7 @@ export default function CreateTaskModal({ isOpen, onClose, editTask, onSaved }: 
                                         type="button"
                                         onClick={handleSave}
                                         disabled={!title.trim() || isLoading}
-                                        className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 active:translate-y-0"
+                                        className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 dark:disabled:bg-indigo-900/50 dark:disabled:text-white/50 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-indigo-200 dark:shadow-none hover:shadow-indigo-300 hover:-translate-y-0.5 active:translate-y-0"
                                     >
                                         {isLoading && <Loader2 size={15} className="animate-spin" />}
                                         <CheckCircle2 size={16} />

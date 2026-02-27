@@ -9,6 +9,8 @@ export interface ITask extends Document {
     description: string;
     priority: Priority;
     status: TaskStatus;
+    category: string;
+    order: number;
     dueDate: Date | null;
     reminders: boolean;
     reminderSentAt: Date | null;
@@ -25,6 +27,8 @@ const taskSchema = new Schema<ITask>(
         description: { type: String, default: '' },
         priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
         status: { type: String, enum: ['todo', 'in_progress', 'completed'], default: 'todo' },
+        category: { type: String, default: 'None' },
+        order: { type: Number, default: 0 },
         dueDate: { type: Date, default: null },
         reminders: { type: Boolean, default: true },
         reminderSentAt: { type: Date, default: null },

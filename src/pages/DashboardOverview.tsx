@@ -98,8 +98,8 @@ export default function DashboardOverview() {
 
         {/* ── Welcome ──────────────────────────────────────────────── */}
         <div>
-          <h1 className="text-2xl font-bold">{greeting}, {firstName}! 👋</h1>
-          <p className="text-slate-500">Here's what's happening with your tasks today.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{greeting}, {firstName}! 👋</h1>
+          <p className="text-slate-500 dark:text-slate-400 transition-colors">Here's what's happening with your tasks today.</p>
         </div>
 
         {/* ── Stats Cards ───────────────────────────────────────────── */}
@@ -109,18 +109,18 @@ export default function DashboardOverview() {
             label="Total Tasks"
             value={statsLoading ? null : (stats?.total ?? 0)}
             trend={stats && stats.inbox > 0 ? `${stats.inbox} active` : undefined}
-            trendColor="text-indigo-600 bg-indigo-50"
+            trendColor="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 transition-colors"
             loading={statsLoading}
             error={statsError}
           />
           <StatCard
-            icon={<CheckCircle2 className="text-emerald-600" />}
+            icon={<CheckCircle2 className="text-emerald-600 dark:text-emerald-400" />}
             label="Completed"
             value={statsLoading ? null : (stats?.completed ?? 0)}
             trend={stats && stats.total > 0
               ? `${Math.round((stats.completed / stats.total) * 100)}% done`
               : undefined}
-            trendColor="text-emerald-600 bg-emerald-50"
+            trendColor="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 transition-colors"
             loading={statsLoading}
             error={statsError}
           />
@@ -134,9 +134,9 @@ export default function DashboardOverview() {
         </div>
 
         {/* ── Recent Tasks ──────────────────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-lg font-bold">Recent Tasks</h2>
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors duration-300">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-300">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white transition-colors">Recent Tasks</h2>
             <Link to="/tasks" className="text-indigo-600 text-sm font-semibold hover:underline flex items-center gap-1">
               View all <ChevronRight size={14} />
             </Link>
@@ -164,25 +164,25 @@ export default function DashboardOverview() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 transition-colors duration-300">
                   <tr>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Task Name</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Priority</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Due Date</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Task Name</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Priority</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors">Due Date</th>
+                    <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right transition-colors">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors duration-300">
                   {recentTasks.map((task) => (
                     <tr
                       key={task._id}
-                      className="hover:bg-slate-50 transition-colors group cursor-pointer"
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer"
                       onClick={() => navigate('/tasks')}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className={cn('h-2 w-2 rounded-full shrink-0', PRIORITY_DOT[task.priority])} />
-                          <span className="font-medium text-sm text-slate-900 truncate max-w-xs">{task.title}</span>
+                          <span className="font-medium text-sm text-slate-900 dark:text-slate-200 truncate max-w-xs transition-colors">{task.title}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -209,30 +209,30 @@ export default function DashboardOverview() {
         {/* ── Priority Breakdown ────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-8">
           <PriorityCard
-            icon={<Flag className="text-red-500" size={20} />}
+            icon={<Flag className="text-red-500 dark:text-red-400" size={20} />}
             label="High Priority"
             count={highCount}
             total={recentTasks.length}
             barColor="bg-red-500"
-            bgColor="bg-red-50"
+            bgColor="bg-red-50 dark:bg-red-900/20"
             loading={tasksLoading}
           />
           <PriorityCard
-            icon={<Flag className="text-amber-500" size={20} />}
+            icon={<Flag className="text-amber-500 dark:text-amber-400" size={20} />}
             label="Medium Priority"
             count={medCount}
             total={recentTasks.length}
             barColor="bg-amber-400"
-            bgColor="bg-amber-50"
+            bgColor="bg-amber-50 dark:bg-amber-900/20"
             loading={tasksLoading}
           />
           <PriorityCard
-            icon={<Flag className="text-emerald-500" size={20} />}
+            icon={<Flag className="text-emerald-500 dark:text-emerald-400" size={20} />}
             label="Low Priority"
             count={lowCount}
             total={recentTasks.length}
             barColor="bg-emerald-500"
-            bgColor="bg-emerald-50"
+            bgColor="bg-emerald-50 dark:bg-emerald-900/20"
             loading={tasksLoading}
           />
         </div>
@@ -256,22 +256,22 @@ function StatCard({
   error: string;
 }) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
       <div className="flex items-center justify-between mb-4">
-        <div className="p-2 rounded-lg bg-slate-50">{icon}</div>
+        <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800 transition-colors">{icon}</div>
         {trend && !loading && !error && (
           <span className={cn('text-xs font-medium px-2 py-1 rounded-full', trendColor)}>
             {trend}
           </span>
         )}
       </div>
-      <p className="text-slate-500 text-sm font-medium">{label}</p>
+      <p className="text-slate-500 dark:text-slate-400 text-sm font-medium transition-colors">{label}</p>
       {loading ? (
-        <div className="h-9 w-12 bg-slate-100 rounded-lg animate-pulse mt-1" />
+        <div className="h-9 w-12 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse mt-1" />
       ) : error ? (
         <p className="text-red-400 text-xs mt-1">—</p>
       ) : (
-        <h3 className="text-3xl font-bold mt-1">{value}</h3>
+        <h3 className="text-3xl font-bold mt-1 text-slate-900 dark:text-white transition-colors">{value}</h3>
       )}
     </div>
   );
@@ -292,26 +292,26 @@ function PriorityCard({
 }) {
   const pct = total > 0 ? Math.round((count / total) * 100) : 0;
   return (
-    <Link to="/tasks" className={cn('p-6 rounded-xl flex flex-col gap-4 hover:shadow-md transition-all border border-slate-200 bg-white')}>
+    <Link to="/tasks" className={cn('p-6 rounded-xl flex flex-col gap-4 hover:shadow-md transition-all border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900')}>
       <div className="flex items-center justify-between">
-        <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center', bgColor)}>
+        <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center transition-colors', bgColor)}>
           {icon}
         </div>
         {loading ? (
-          <div className="h-7 w-8 bg-slate-100 rounded animate-pulse" />
+          <div className="h-7 w-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
         ) : (
-          <span className="text-2xl font-bold text-slate-900">{count}</span>
+          <span className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{count}</span>
         )}
       </div>
       <div>
-        <p className="font-semibold text-slate-800 text-sm mb-2">{label}</p>
-        <div className="w-full bg-slate-100 rounded-full h-1.5">
+        <p className="font-semibold text-slate-800 dark:text-slate-200 text-sm mb-2 transition-colors">{label}</p>
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 transition-colors duration-300">
           <div
             className={cn('h-1.5 rounded-full transition-all duration-500', barColor)}
             style={{ width: loading ? '0%' : `${pct}%` }}
           />
         </div>
-        <p className="text-xs text-slate-400 mt-1">{loading ? '…' : `${pct}% of active tasks`}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 transition-colors">{loading ? '…' : `${pct}% of active tasks`}</p>
       </div>
     </Link>
   );

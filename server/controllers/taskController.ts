@@ -58,7 +58,7 @@ export async function getTasks(req: AuthRequest, res: Response) {
             filter.title = { $regex: search, $options: 'i' };
         }
 
-        const tasks = await Task.find(filter).sort({ createdAt: -1 });
+        const tasks = await Task.find(filter).sort({ order: 1, createdAt: -1 });
         return res.json({ tasks });
     } catch (err) {
         console.error('[getTasks]', err);
@@ -69,7 +69,7 @@ export async function getTasks(req: AuthRequest, res: Response) {
 // ── POST /api/tasks ────────────────────────────────────────────────────────────
 export async function createTask(req: AuthRequest, res: Response) {
     try {
-        const { title, description, priority, status, dueDate, reminders } = req.body;
+        const { title, description, priority, status, dueDate, reminders, category } = req.body;
 
         if (!title?.trim()) {
             return res.status(400).json({ error: 'Task title is required.' });
@@ -81,6 +81,8 @@ export async function createTask(req: AuthRequest, res: Response) {
             description: description?.trim() ?? '',
             priority: priority ?? 'Medium',
             status: status ?? 'todo',
+            category: category ?? 'None',
+            order: Date.now(),
             dueDate: dueDate ? new Date(dueDate) : null,
             reminders: reminders ?? true,
         });
@@ -114,7 +116,7 @@ export async function updateTask(req: AuthRequest, res: Response) {
             return res.status(400).json({ error: 'Invalid task ID.' });
         }
 
-        const allowed = ['title', 'description', 'priority', 'status', 'dueDate', 'reminders'];
+        const allowed = ['title', 'description', 'priority', 'status', 'dueDate', 'reminders', 'category'];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updates: Record<string, any> = {};
 
@@ -155,6 +157,32 @@ export async function updateTask(req: AuthRequest, res: Response) {
         return res.json({ task });
     } catch (err) {
         console.error('[updateTask]', err);
+        return res.status(500).json({ error: 'Internal server error.' });
+    }
+}
+
+// ── PATCH /api/tasks/reorder ───────────────────────────────────────────────────
+export async function reorderTasks(req: AuthRequest, res: Response) {
+    try {
+        const { tasks } = req.body;
+        if (!Array.isArray(tasks)) {
+            return res.status(400).json({ error: 'Expected an array of tasks.' });
+        }
+
+        const bulkOps = tasks.map((t) => ({
+            updateOne: {
+                filter: { _id: t.id, userId: req.userId },
+                update: { $set: { order: t.order } },
+            },
+        }));
+
+        if (bulkOps.length > 0) {
+            await Task.bulkWrite(bulkOps);
+        }
+
+        return res.json({ message: 'Tasks reordered.' });
+    } catch (err) {
+        console.error('[reorderTasks]', err);
         return res.status(500).json({ error: 'Internal server error.' });
     }
 }

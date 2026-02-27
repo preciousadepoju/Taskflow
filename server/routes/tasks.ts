@@ -8,6 +8,7 @@ import {
     deleteTask,
     toggleComplete,
     getTaskStats,
+    reorderTasks,
 } from '../controllers/taskController.js';
 
 const router = Router();
@@ -18,6 +19,7 @@ router.use(requireAuth);
 router.get('/stats', getTaskStats);        // GET  /api/tasks/stats
 router.get('/', getTasks);                 // GET  /api/tasks?tab=inbox&priority=High&search=...
 router.post('/', createTask);              // POST /api/tasks
+router.patch('/reorder', reorderTasks);    // PATCH /api/tasks/reorder
 router.get('/:id', getTaskById);           // GET  /api/tasks/:id
 router.put('/:id', updateTask);            // PUT  /api/tasks/:id
 router.delete('/:id', deleteTask);         // DELETE /api/tasks/:id
