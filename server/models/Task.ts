@@ -12,6 +12,8 @@ export interface ITask extends Document {
     dueDate: Date | null;
     reminders: boolean;
     reminderSentAt: Date | null;
+    reminderCount: number;
+    completedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,6 +28,8 @@ const taskSchema = new Schema<ITask>(
         dueDate: { type: Date, default: null },
         reminders: { type: Boolean, default: true },
         reminderSentAt: { type: Date, default: null },
+        reminderCount: { type: Number, default: 0 },
+        completedAt: { type: Date, default: null },
     },
     { timestamps: true }
 );

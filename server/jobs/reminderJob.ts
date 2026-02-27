@@ -20,12 +20,17 @@ async function processReminders(): Promise<void> {
         //   1. have reminders enabled
         //   2. are not completed
         //   3. due date is within the next 24 hours (from now → now+24h)
-        //   4. reminder has NOT been sent yet
+        //   4. have either 0 reminders sent, OR 1 reminder sent more than 8 hours ago
+        const eightHoursAgo = new Date(now.getTime() - 8 * 60 * 60 * 1000);
         const tasks = await Task.find({
             reminders: true,
             status: { $ne: 'completed' },
             dueDate: { $gte: now, $lte: in24h },
-            reminderSentAt: null,
+            $or: [
+                { reminderCount: 0 },
+                { reminderCount: null },
+                { reminderCount: 1, reminderSentAt: { $lte: eightHoursAgo } }
+            ]
         });
 
         if (tasks.length === 0) {
@@ -53,11 +58,12 @@ async function processReminders(): Promise<void> {
                     dueDate: task.dueDate!,
                 });
 
-                // Mark reminder as sent so we never send it twice
+                // Mark reminder as sent and increment count
                 task.reminderSentAt = new Date();
+                task.reminderCount = (task.reminderCount || 0) + 1;
                 await task.save();
 
-                console.log(`[reminderJob] ✅ Reminded ${owner.email} for task "${task.title}"`);
+                console.log(`[reminderJob] ✅ Reminded ${owner.email} for task "${task.title}" (Reminder #${task.reminderCount})`);
             } catch (err) {
                 // Don't let one failure block the others
                 console.error(`[reminderJob] ❌ Failed for task ${task._id}:`, err);

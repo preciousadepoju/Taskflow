@@ -6,6 +6,7 @@ import {
   Edit,
   Trash2,
   CheckCircle2,
+  Circle,
   Calendar,
   X,
   ChevronRight,
@@ -15,8 +16,10 @@ import {
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import CreateTaskModal from '../components/CreateTaskModal';
+import ConfirmModal from '../components/ConfirmModal';
 import { authedFetch, Task, TabId } from '@/src/lib/api';
 import { useUser } from '@/src/hooks/useUser';
+import confetti from 'canvas-confetti';
 
 // ── Priority colours ──────────────────────────────────────────────────────────
 const PRIORITY_COLOURS: Record<string, string> = {
@@ -89,6 +92,8 @@ export default function TasksPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // If URL ?search= changes (e.g. header navigation), sync it
   useEffect(() => {
@@ -131,32 +136,79 @@ export default function TasksPage() {
   // ── Toggle complete ───────────────────────────────────────────────────────
   const handleToggleComplete = async (task: Task, e: React.MouseEvent) => {
     e.stopPropagation();
+    const isCompleting = task.status !== 'completed';
+
+    // Optimistic update
+    if ((tab !== 'completed' && isCompleting) || (tab === 'completed' && !isCompleting)) {
+      setTasks((prev) => prev.filter((t) => t._id !== task._id));
+    } else {
+      setTasks((prev) => prev.map((t) => t._id === task._id ? { ...t, status: isCompleting ? 'completed' : 'todo' } : t));
+    }
+
     const res = await authedFetch(`/api/tasks/${task._id}/complete`, { method: 'PATCH' });
     if (res.ok) {
+      if (isCompleting) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
       window.dispatchEvent(new Event('tasks:refresh'));
       fetchTasks();
+    } else {
+      fetchTasks(); // Request failed, revert optimistic UI
     }
   };
 
   // ── Delete ────────────────────────────────────────────────────────────────
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Delete this task?')) return;
-    const res = await authedFetch(`/api/tasks/${id}`, { method: 'DELETE' });
+    setTaskToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!taskToDelete) return;
+    setIsDeleting(true);
+    const res = await authedFetch(`/api/tasks/${taskToDelete}`, { method: 'DELETE' });
     if (res.ok) {
-      if (selectedTask?._id === id) setSelectedTask(null);
+      if (selectedTask?._id === taskToDelete) setSelectedTask(null);
+      setTasks((prev) => prev.filter((t) => t._id !== taskToDelete));
       window.dispatchEvent(new Event('tasks:refresh'));
       fetchTasks();
     }
+    setIsDeleting(false);
+    setTaskToDelete(null);
   };
 
   // ── Mark complete from detail panel ──────────────────────────────────────
   const handleMarkComplete = async () => {
     if (!selectedTask) return;
+    const isCompleting = selectedTask.status !== 'completed';
+
+    // Optimistic UI updates
+    const updatedTask = { ...selectedTask, status: isCompleting ? 'completed' : 'todo' } as Task;
+    setSelectedTask(updatedTask);
+
+    if ((tab !== 'completed' && isCompleting) || (tab === 'completed' && !isCompleting)) {
+      setTasks((prev) => prev.filter((t) => t._id !== selectedTask._id));
+    } else {
+      setTasks((prev) => prev.map((t) => t._id === selectedTask._id ? updatedTask : t));
+    }
+
     const res = await authedFetch(`/api/tasks/${selectedTask._id}/complete`, { method: 'PATCH' });
     if (res.ok) {
+      if (isCompleting) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
       window.dispatchEvent(new Event('tasks:refresh'));
       fetchTasks();
+    } else {
+      fetchTasks(); // Error occurred, let's revert
     }
   };
 
@@ -273,10 +325,10 @@ export default function TasksPage() {
                         <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={(e) => handleToggleComplete(task, e)}
-                            className="text-slate-300 hover:text-indigo-500 transition-colors"
+                            className={cn("transition-colors", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
                             title={done ? 'Mark todo' : 'Mark complete'}
                           >
-                            <CheckCircle2 size={18} className={done ? 'text-emerald-500' : ''} />
+                            {done ? <CheckCircle2 size={18} /> : <Circle size={18} />}
                           </button>
                         </td>
                         <td className="px-4 py-4">
@@ -331,9 +383,9 @@ export default function TasksPage() {
                     >
                       <button
                         onClick={(e) => handleToggleComplete(task, e)}
-                        className="mt-0.5 text-slate-300 hover:text-indigo-500 transition-colors shrink-0"
+                        className={cn("mt-0.5 transition-colors shrink-0", done ? "text-emerald-500" : "text-slate-300 hover:text-indigo-500")}
                       >
-                        <CheckCircle2 size={20} className={done ? 'text-emerald-500' : ''} />
+                        {done ? <CheckCircle2 size={20} /> : <Circle size={20} />}
                       </button>
                       <div className="flex-1 min-w-0">
                         <p className={cn('text-sm font-medium text-slate-900 truncate', done && 'line-through')}>
@@ -466,6 +518,16 @@ export default function TasksPage() {
                         selectedTask.status.charAt(0).toUpperCase() + selectedTask.status.slice(1)}
                     </span>
                   </DetailRow>
+                  {selectedTask.status === 'completed' && selectedTask.completedAt && (
+                    <DetailRow label="Completed">
+                      <div className="flex items-center gap-2 text-sm font-medium text-emerald-600">
+                        <CheckCircle2 size={16} />
+                        <span>
+                          {new Date(selectedTask.completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(selectedTask.completedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </DetailRow>
+                  )}
                 </div>
               </section>
 
@@ -500,6 +562,16 @@ export default function TasksPage() {
         onClose={() => { setIsModalOpen(false); setEditTask(null); }}
         editTask={editTask}
         onSaved={fetchTasks}
+      />
+
+      <ConfirmModal
+        isOpen={!!taskToDelete}
+        onClose={() => setTaskToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        confirmText="Delete"
+        isLoading={isDeleting}
       />
     </div>
   );

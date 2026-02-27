@@ -126,10 +126,19 @@ export async function updateTask(req: AuthRequest, res: Response) {
             }
         }
 
-        // If the due date is being changed, reset reminderSentAt so the user
-        // receives a fresh reminder email 24h before the updated due date.
+        if ('status' in updates) {
+            if (updates.status === 'completed') {
+                updates.completedAt = new Date();
+            } else {
+                updates.completedAt = null;
+            }
+        }
+
+        // If the due date is being changed, reset reminderSentAt and reminderCount so the user
+        // receives fresh reminder emails 24h before the updated due date.
         if ('dueDate' in updates) {
             updates.reminderSentAt = null;
+            updates.reminderCount = 0;
         }
 
         if (Object.keys(updates).length === 0) {
@@ -175,6 +184,11 @@ export async function toggleComplete(req: AuthRequest, res: Response) {
         if (!task) return res.status(404).json({ error: 'Task not found.' });
 
         task.status = task.status === 'completed' ? 'todo' : 'completed';
+        if (task.status === 'completed') {
+            task.completedAt = new Date();
+        } else {
+            task.completedAt = null;
+        }
         await task.save();
         return res.json({ task });
     } catch (err) {

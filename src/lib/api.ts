@@ -35,6 +35,7 @@ export interface Task {
     dueDate: string | null;
     reminders: boolean;
     createdAt: string;
+    completedAt: string | null;
 }
 
 export interface TaskStats {
