@@ -34,7 +34,7 @@ export default function SettingsPage() {
   return (
     <div className="flex h-full -m-8 overflow-hidden">
       {/* Settings Sidebar */}
-      <aside className="w-56 border-r border-slate-200 bg-white flex flex-col shrink-0">
+      <aside className="w-56 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col shrink-0 transition-colors duration-300">
         <div className="p-5 flex-1">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 px-1">Settings</p>
           <nav className="space-y-0.5">
@@ -46,7 +46,7 @@ export default function SettingsPage() {
                   "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-colors font-medium text-sm text-left",
                   activeSection === s.id
                     ? "bg-indigo-600 text-white"
-                    : "text-slate-600 hover:bg-slate-100"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
                 {s.icon}
@@ -57,7 +57,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Logout */}
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
           <button
             onClick={() => navigate('/login')}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors font-medium text-sm"
@@ -74,9 +74,9 @@ export default function SettingsPage() {
 
           {/* Profile Information */}
           <section id="settings-profile" className="space-y-6">
-            <div className="border-b border-slate-200 pb-5">
-              <h2 className="text-2xl font-bold text-slate-900">Profile Information</h2>
-              <p className="text-slate-500 mt-1">Update your photo and personal details here.</p>
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-5 transition-colors duration-300">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Profile Information</h2>
+              <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors">Update your photo and personal details here.</p>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -96,27 +96,27 @@ export default function SettingsPage() {
 
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">First Name</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">First Name</label>
                   <input
                     type="text"
                     defaultValue="Alex"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">Last Name</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">Last Name</label>
                   <input
                     type="text"
                     defaultValue="Johnson"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">Email Address</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">Email Address</label>
                   <input
                     type="email"
                     defaultValue="alex.johnson@taskflow.com"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                   />
                 </div>
               </div>
@@ -131,35 +131,35 @@ export default function SettingsPage() {
 
           {/* Security */}
           <section id="settings-security" className="space-y-6">
-            <div className="border-b border-slate-200 pb-5">
-              <h2 className="text-2xl font-bold text-slate-900">Security</h2>
-              <p className="text-slate-500 mt-1">Manage your password and account security settings.</p>
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-5 transition-colors duration-300">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Security</h2>
+              <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors">Manage your password and account security settings.</p>
             </div>
 
             <div className="grid grid-cols-1 gap-5 max-w-2xl">
               <div>
-                <label className="block text-sm font-semibold mb-2 text-slate-700">Current Password</label>
+                <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">Current Password</label>
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm bg-white dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">New Password</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">New Password</label>
                   <input
                     type="password"
                     placeholder="••••••••"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm bg-white dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">Confirm New Password</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300 transition-colors">Confirm New Password</label>
                   <input
                     type="password"
                     placeholder="••••••••"
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm bg-white dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors duration-300"
                   />
                 </div>
               </div>
@@ -174,9 +174,9 @@ export default function SettingsPage() {
 
           {/* Preferences */}
           <section id="settings-preferences" className="space-y-6">
-            <div className="border-b border-slate-200 pb-5">
-              <h2 className="text-2xl font-bold text-slate-900">Preferences</h2>
-              <p className="text-slate-500 mt-1">Customize your TaskFlow experience and notifications.</p>
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-5 transition-colors duration-300">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Preferences</h2>
+              <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors">Customize your TaskFlow experience and notifications.</p>
             </div>
 
             <div className="space-y-3">
@@ -208,18 +208,18 @@ export default function SettingsPage() {
 
           {/* Billing & Plan */}
           <section id="settings-billing" className="space-y-6">
-            <div className="border-b border-slate-200 pb-5">
-              <h2 className="text-2xl font-bold text-slate-900">Billing & Plan</h2>
-              <p className="text-slate-500 mt-1">Manage your subscription and payment details.</p>
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-5 transition-colors duration-300">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Billing & Plan</h2>
+              <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors">Manage your subscription and payment details.</p>
             </div>
 
-            <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex items-center justify-between">
+            <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between transition-colors duration-300">
               <div>
-                <span className="inline-block bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-full mb-2">Pro Plan</span>
-                <p className="font-bold text-slate-900">$12 / month</p>
-                <p className="text-sm text-slate-500 mt-1">Next billing date: Feb 28, 2026</p>
+                <span className="inline-block bg-indigo-600 dark:bg-indigo-500 text-white text-xs font-bold px-2.5 py-1 rounded-full mb-2">Pro Plan</span>
+                <p className="font-bold text-slate-900 dark:text-white transition-colors">$12 / month</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 transition-colors">Next billing date: Feb 28, 2026</p>
               </div>
-              <button className="px-5 py-2.5 border border-slate-200 bg-white text-slate-700 font-semibold text-sm rounded-lg hover:bg-slate-50 transition-colors shadow-sm">
+              <button className="px-5 py-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
                 Manage Plan
               </button>
             </div>
@@ -246,21 +246,21 @@ function PreferenceToggle({ icon, title, description, defaultChecked }: {
 }) {
   const [checked, setChecked] = useState(defaultChecked ?? false);
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white transition-colors">
+    <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-300">
       <div className="flex gap-4 items-center">
-        <div className="p-2 bg-indigo-50 rounded-lg shrink-0">
+        <div className="p-2 bg-indigo-50 dark:bg-slate-800 rounded-lg shrink-0 transition-colors">
           {icon}
         </div>
         <div>
-          <p className="font-semibold text-slate-900 text-sm">{title}</p>
-          <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+          <p className="font-semibold text-slate-900 dark:text-white text-sm transition-colors">{title}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 transition-colors">{description}</p>
         </div>
       </div>
       <button
         role="switch"
         aria-checked={checked}
         onClick={() => setChecked(!checked)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shrink-0 ${checked ? 'bg-indigo-600' : 'bg-slate-200'
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shrink-0 ${checked ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'
           }`}
       >
         <span
